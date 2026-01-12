@@ -1,0 +1,50 @@
+[
+  {
+    "name": "Rahul",
+    "email": "rahul@gmail.com",
+    "message": "I want automation for my business",
+    "qualification": "This lead can be classified as **WARM**. \n\n**Explanation**: The lead shows interest in a specific service (automation for his business), indicating he is considering options or solutions. However, without further details such as urgency, budget, or commitment to purchase, he does not qualify as HOT. A HOT lead would typically indicate readiness to engage or initiate a purchase immediately.",
+    "reply": "Subject: Re: Automation Solutions for Your Business\n\nDear Rahul,\n\nThank you for reaching out and expressing your interest in automation for your business. We're excited to discuss how our solutions can help enhance your operations and streamline processes.\n\nTo better assist you, could you please provide more details about your business and any specific areas you're looking to automate? Additionally, understanding your goals and any constraints such as budget or timeline will help us tailor our recommendations to your needs.\n\nLooking forward to your response!\n\nBest regards,\n\n[Your Name]  \n[Your Position]  \n[Your Company]  \n[Your Contact Information]  ",
+    "date": "2026-01-12T04:56:43.226Z"
+  },
+  {
+    "name": "Jai",
+    "email": "abc@gmail.com",
+    "message": "What is the pricing for the club?",
+    "classification": "This lead is classified as **WARM**. \n\nReason: Jai has shown interest by inquiring about pricing, indicating that they are considering membership or services but have not yet made a decision or commitment. They are engaged but not yet ready to convert, which places them in the warm category.",
+    "reply": "Subject: Pricing Information for Our Club\n\nHi Jai,\n\nThank you for reaching out to us and expressing interest in our club! I’m happy to provide you with the pricing information.\n\nWe offer several membership options that cater to different preferences and needs. Here’s a brief overview:\n\n- **Individual Membership:** [Price and details]\n- **Family Membership:** [Price and details]\n- **Student Membership:** [Price and details]\n- **Corporate Membership:** [Price and details]\n\nEach option comes with a range of benefits that can enhance your experience with us. If you’d like, I can follow up with more specific details or answer any questions you may have regarding the different membership types.\n\nFeel free to let me know how I can assist you further. We’d love to welcome you to our community!\n\nBest regards,\n\n[Your Name]  \n[Your Position]  \n[Your Club Name]  \n[Your Phone Number]  \n[Your Email Address]  ",
+    "createdAt": "2026-01-12T05:06:05.135Z"
+  },
+  {
+    "name": "Jai",
+    "email": "abc@gmail.com",
+    "message": "What is the pricing for the club?",
+    "classification": "Classification: HOT\n\nReason: The lead has directly inquired about pricing, indicating a strong interest in the club. This suggests that they are actively considering a membership or service, which makes them a potential customer ready to engage further.",
+    "reply": "Subject: Re: Inquiry About Club Pricing\n\nDear Jai,\n\nThank you for reaching out to us regarding our club pricing. We appreciate your interest!\n\nOur membership options vary depending on the level of access and amenities you would like to enjoy. I’d be happy to provide you with a detailed overview of our pricing structure. \n\nCould you please let me know if you’re interested in any specific membership type or if you'd like to discuss it further? I can also arrange a time for us to chat or meet if that would be preferable for you.\n\nLooking forward to hearing from you!\n\nBest regards,\n\n[Your Name]  \n[Your Position]  \n[Club Name]  \n[Your Phone Number]  \n[Your Website]  ",
+    "createdAt": "2026-01-12T05:06:05.970Z"
+  },
+  {
+    "name": "Jai",
+    "email": "abc@gmail.com",
+    "message": "What is the pricing for the club?",
+    "classification": "This lead can be classified as **WARM**.\n\nReason: The inquiry about pricing indicates that Jai has a specific interest in the club services, showing potential intent to engage, but does not explicitly indicate urgency or commitment to purchase at this moment.",
+    "reply": "Subject: Pricing Information for Club Membership\n\nHi Jai,\n\nThank you for reaching out and your interest in our club! We're delighted to hear that you're considering joining us.\n\nOur pricing varies based on the type of membership and any current promotions. I would be happy to provide you with detailed information. \n\nPlease let me know if you have any specific membership options in mind, or if you would like to discuss our offerings further. I can also schedule a call if that's more convenient for you.\n\nLooking forward to assisting you!\n\nBest regards,\n\n[Your Name]  \n[Your Position]  \n[Club Name]  \n[Contact Information]  ",
+    "createdAt": "2026-01-12T05:07:27.176Z"
+  },
+  {
+    "name": "Jai",
+    "email": "abc@gmail.com",
+    "message": "What is the pricing for the club?",
+    "classification": "This lead can be classified as **HOT**. \n\nReason: The inquiry about pricing indicates a strong interest in the service or product offered, suggesting that Jai is actively considering making a purchase or membership decision.",
+    "reply": "Subject: Pricing Information for Club Membership\n\nDear Jai,\n\nThank you for reaching out to us with your inquiry about our club pricing. We are thrilled to hear of your interest!\n\nI would be happy to provide you with the information you need. Our membership options are designed to cater to various preferences, and I would love to help you find the best fit for you.\n\nHere are our current membership options:\n\n1. **Individual Membership**: $X per month\n2. **Family Membership**: $Y per month\n3. **Student Membership**: $Z per month\n\nEach membership option comes with a range of benefits, including access to facilities, special events, and discounts on programs. \n\nIf you'd like to discuss this further or have any specific questions, please feel free to reply to this email or call me directly at [Your Phone Number]. I would be happy to assist you and provide additional details.\n\nLooking forward to hearing from you soon!\n\nBest regards,\n\n[Your Name]  \n[Your Position]  \n[Your Club Name]  \n[Your Contact Information]  \n[Your Club Website]  ",
+    "createdAt": "2026-01-12T05:07:28.127Z"
+  },
+  {
+    "name": "Jai",
+    "email": "abc@gmail.com",
+    "message": "What is the price for the club?",
+    "classification": "**Classification: HOT**\n\n**Reason:** The lead is directly inquiring about the price for a club, indicating a strong interest in possibly purchasing or engaging with the service. This suggests they are actively considering a decision, making them a hot lead.",
+    "reply": "Subject: Re: Inquiry About Club Pricing\n\nDear Jai,\n\nThank you for reaching out! I appreciate your interest in our club.\n\nThe pricing details can vary based on the membership type and any current promotions we may have. I would be happy to provide you with all the relevant information. \n\nCould you please let me know which type of membership you're interested in? Additionally, if you have any specific questions or requirements, feel free to share those as well.\n\nLooking forward to your response!\n\nBest regards,\n\n[Your Name]  \n[Your Position]  \n[Your Company]  \n[Your Phone Number]  \n[Your Email Address]  ",
+    "createdAt": "2026-01-12T05:10:50.928Z"
+  }
+]

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>AI Automation Agency</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 600px;
+      margin: 40px auto;
+    }
+    input, textarea, button {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+    }
+    pre {
+      background: #f4f4f4;
+      padding: 15px;
+      white-space: pre-wrap;
+    }
+  </style>
+</head>
+<body>
+
+<h2>Send a Lead</h2>
+
+<form id="leadForm">
+  <input id="nameInput" placeholder="Name" required />
+  <input id="emailInput" type="email" placeholder="Email" required />
+  <textarea id="messageInput" placeholder="Message" required></textarea>
+  <button type="submit">Submit</button>
+</form>
+
+<h3>Result</h3>
+<pre id="result"></pre>
+
+<script>
+  const form = document.getElementById("leadForm");
+  const result = document.getElementById("result");
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const payload = {
+      name: document.getElementById("nameInput").value,
+      email: document.getElementById("emailInput").value,
+      message: document.getElementById("messageInput").value,
+    };
+
+    const res = await fetch("/api/lead", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+
+    const data = await res.json();
+    result.textContent = JSON.stringify(data, null, 2);
+  });
+</script>
+
+</body>
+</html>
