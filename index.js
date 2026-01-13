@@ -11,9 +11,9 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-/* ======================
+/* =========================
    CLIENTS
-====================== */
+========================= */
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
@@ -25,9 +25,9 @@ const supabase = createClient(
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
-/* ======================
+/* =========================
    HEALTH CHECK
-====================== */
+========================= */
 app.get("/", (req, res) => {
   res.json({
     status: "OK",
@@ -35,9 +35,9 @@ app.get("/", (req, res) => {
   });
 });
 
-/* ======================
-   LEAD → AI → SAVE → EMAIL
-====================== */
+/* =========================
+   CREATE LEAD
+========================= */
 app.post("/api/lead", async (req, res) => {
   try {
     const { name, email, message } = req.body;
@@ -55,7 +55,7 @@ app.post("/api/lead", async (req, res) => {
         {
           role: "system",
           content:
-            "You are a professional business sales assistant. Write polite, confident, and helpful email replies.",
+            "You are a professional sales assistant. Write polite, confident, and helpful business email replies.",
         },
         {
           role: "user",
@@ -64,7 +64,7 @@ app.post("/api/lead", async (req, res) => {
       ],
     });
 
-    const aiReply = replyCompletion.choices[0].message.content;
+    const aiReply = replyCompletion.choices[0].message.content.trim();
 
     /* ---------- AI QUALIFICATION ---------- */
     const qualificationCompletion = await openai.chat.completions.create({
@@ -78,12 +78,10 @@ app.post("/api/lead", async (req, res) => {
         {
           role: "user",
           content: `
-Classify the following lead:
-
 Rules:
-- HOT: clear intent, urgency, budget, ready to buy
+- HOT: clear intent, urgency, budget
 - WARM: interested but needs discussion
-- COLD: vague or just browsing
+- COLD: vague or browsing
 
 Lead message:
 "${message}"
@@ -106,13 +104,13 @@ Return ONLY one word: HOT, WARM, or COLD.
           email,
           message,
           ai_reply: aiReply,
-          qualification, // HOT / WARM / COLD
+          qualification,
         },
       ])
       .select();
 
     if (error) {
-      console.error("SUPABASE ERROR:", error);
+      console.error("SUPABASE INSERT ERROR:", error);
       return res.status(500).json({
         error: "Failed to save lead",
         details: error.message,
@@ -127,7 +125,6 @@ Return ONLY one word: HOT, WARM, or COLD.
       html: `<p>${aiReply}</p>`,
     });
 
-    /* ---------- RESPONSE ---------- */
     res.status(201).json({
       success: true,
       qualification,
@@ -141,10 +138,39 @@ Return ONLY one word: HOT, WARM, or COLD.
   }
 });
 
-/* ======================
+/* =========================
+   ADMIN – GET ALL LEADS
+========================= */
+app.get("/api/leads", async (req, res) => {
+  try {
+    const { data, error } = await supabase
+      .from("leads")
+      .select("*")
+      .order("created_at", { ascending: false });
+
+    if (error) {
+      console.error("SUPABASE READ ERROR:", error);
+      return res.status(500).json({
+        error: "Failed to fetch leads",
+      });
+    }
+
+    res.json({
+      leads: data,
+    });
+  } catch (err) {
+    console.error("SERVER ERROR:", err);
+    res.status(500).json({
+      error: "Internal server error",
+    });
+  }
+});
+
+/* =========================
    START SERVER
-====================== */
+========================= */
 const PORT = process.env.PORT || 3000;
+
 app.listen(PORT, () => {
   console.log(`✅ Server running on port ${PORT}`);
 });
