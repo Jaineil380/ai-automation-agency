@@ -1,7 +1,6 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
-import OpenAI from "openai";
 import { createClient } from "@supabase/supabase-js";
 import { Resend } from "resend";
 
@@ -11,166 +10,79 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-/* =========================
-   CLIENTS
-========================= */
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
-
+// Supabase
 const supabase = createClient(
   process.env.SUPABASE_URL,
   process.env.SUPABASE_ANON_KEY
 );
 
+// Resend
 const resend = new Resend(process.env.RESEND_API_KEY);
 
-/* =========================
-   HEALTH CHECK
-========================= */
+// Health check
 app.get("/", (req, res) => {
-  res.json({
-    status: "OK",
-    message: "AI Automation Agency backend is running 🚀",
-  });
+  res.json({ status: "OK", message: "Server is running" });
 });
 
-/* =========================
-   CREATE LEAD
-========================= */
+// Simple qualification logic (FREE)
+function qualifyLead(message) {
+  const text = message.toLowerCase();
+  if (text.includes("automation") || text.includes("ai")) return "HOT";
+  if (text.includes("website") || text.includes("marketing")) return "WARM";
+  return "COLD";
+}
+
+// Lead endpoint
 app.post("/api/lead", async (req, res) => {
   try {
     const { name, email, message } = req.body;
 
     if (!name || !email || !message) {
-      return res.status(400).json({
-        error: "Name, email, and message are required",
-      });
+      return res.status(400).json({ error: "Missing fields" });
     }
 
-    /* ---------- AI REPLY ---------- */
-    const replyCompletion = await openai.chat.completions.create({
-      model: "gpt-5.2",
-      messages: [
-        {
-          role: "system",
-          content:
-            "You are a professional sales assistant. Write polite, confident, and helpful business email replies.",
-        },
-        {
-          role: "user",
-          content: `Write a professional email reply to this lead message:\n"${message}"`,
-        },
-      ],
-    });
+    const qualification = qualifyLead(message);
 
-    const aiReply = replyCompletion.choices[0].message.content.trim();
+    const reply = `Hi ${name},
 
-    /* ---------- AI QUALIFICATION ---------- */
-    const qualificationCompletion = await openai.chat.completions.create({
-      model: "gpt-5.2",
-      messages: [
-        {
-          role: "system",
-          content:
-            "You are a sales expert. Classify leads strictly as HOT, WARM, or COLD.",
-        },
-        {
-          role: "user",
-          content: `
-Rules:
-- HOT: clear intent, urgency, budget
-- WARM: interested but needs discussion
-- COLD: vague or browsing
+Thanks for reaching out! We’ve received your message and will get back to you shortly.
 
-Lead message:
-"${message}"
+– AI Automation Agency`;
 
-Return ONLY one word: HOT, WARM, or COLD.
-          `,
-        },
-      ],
-    });
+    // Save to Supabase
+    const { error } = await supabase.from("leads").insert([
+      {
+        name,
+        email,
+        message,
+        qualification,
+        ai_reply: reply
+      }
+    ]);
 
-    const qualification =
-      qualificationCompletion.choices[0].message.content.trim();
+    if (error) throw error;
 
-    /* ---------- SAVE TO SUPABASE ---------- */
-    const { data, error } = await supabase
-      .from("leads")
-      .insert([
-        {
-          name,
-          email,
-          message,
-          ai_reply: aiReply,
-          qualification,
-        },
-      ])
-      .select();
-
-    if (error) {
-      console.error("SUPABASE INSERT ERROR:", error);
-      return res.status(500).json({
-        error: "Failed to save lead",
-        details: error.message,
-      });
-    }
-
-    /* ---------- SEND EMAIL ---------- */
+    // Send email
     await resend.emails.send({
       from: process.env.FROM_EMAIL,
       to: email,
-      subject: "Thanks for contacting us",
-      html: `<p>${aiReply}</p>`,
+      subject: "We received your message",
+      text: reply
     });
-
-    res.status(201).json({
-      success: true,
-      qualification,
-      message: "Lead processed successfully",
-    });
-  } catch (err) {
-    console.error("SERVER ERROR:", err);
-    res.status(500).json({
-      error: "Internal server error",
-    });
-  }
-});
-
-/* =========================
-   ADMIN – GET ALL LEADS
-========================= */
-app.get("/api/leads", async (req, res) => {
-  try {
-    const { data, error } = await supabase
-      .from("leads")
-      .select("*")
-      .order("created_at", { ascending: false });
-
-    if (error) {
-      console.error("SUPABASE READ ERROR:", error);
-      return res.status(500).json({
-        error: "Failed to fetch leads",
-      });
-    }
 
     res.json({
-      leads: data,
+      success: true,
+      qualification,
+      message: "Lead saved & email sent"
     });
+
   } catch (err) {
-    console.error("SERVER ERROR:", err);
-    res.status(500).json({
-      error: "Internal server error",
-    });
+    console.error(err);
+    res.status(500).json({ error: "Server error" });
   }
 });
 
-/* =========================
-   START SERVER
-========================= */
 const PORT = process.env.PORT || 3000;
-
 app.listen(PORT, () => {
-  console.log(`✅ Server running on port ${PORT}`);
+  console.log(`Server running on port ${PORT}`);
 });
