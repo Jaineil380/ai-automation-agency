@@ -3,61 +3,92 @@
 <head>
   <meta charset="UTF-8" />
   <title>AI Automation Agency</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
   <style>
     body {
       font-family: Arial, sans-serif;
-      max-width: 600px;
-      margin: 40px auto;
+      background: #f3f4f6;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
     }
+
+    .card {
+      background: white;
+      padding: 20px;
+      width: 340px;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    h2 {
+      text-align: center;
+    }
+
     input, textarea, button {
       width: 100%;
+      margin-top: 10px;
       padding: 10px;
-      margin: 10px 0;
+      font-size: 14px;
     }
-    pre {
-      background: #f4f4f4;
-      padding: 15px;
-      white-space: pre-wrap;
+
+    button {
+      background: #4f46e5;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+
+    button:disabled {
+      background: gray;
+    }
+
+    .msg {
+      margin-top: 10px;
+      text-align: center;
     }
   </style>
 </head>
 <body>
 
-<h2>Send a Lead</h2>
+  <div class="card">
+    <h2>Contact Us</h2>
 
-<form id="leadForm">
-  <input id="nameInput" placeholder="Name" required />
-  <input id="emailInput" type="email" placeholder="Email" required />
-  <textarea id="messageInput" placeholder="Message" required></textarea>
-  <button type="submit">Submit</button>
-</form>
+    <input id="name" placeholder="Your name" />
+    <input id="email" placeholder="Your email" />
+    <textarea id="message" placeholder="Your message"></textarea>
 
-<h3>Result</h3>
-<pre id="result"></pre>
+    <button onclick="submitLead()">Submit</button>
 
-<script>
-  const form = document.getElementById("leadForm");
-  const result = document.getElementById("result");
+    <div class="msg" id="response"></div>
+  </div>
 
-  form.addEventListener("submit", async (e) => {
-    e.preventDefault();
+  <script>
+    async function submitLead() {
+      const name = document.getElementById("name").value;
+      const email = document.getElementById("email").value;
+      const message = document.getElementById("message").value;
+      const responseBox = document.getElementById("response");
 
-    const payload = {
-      name: document.getElementById("nameInput").value,
-      email: document.getElementById("emailInput").value,
-      message: document.getElementById("messageInput").value,
-    };
+      responseBox.textContent = "Sending...";
 
-    const res = await fetch("/api/lead", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
-    });
+      const res = await fetch("/api/lead", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, email, message })
+      });
 
-    const data = await res.json();
-    result.textContent = JSON.stringify(data, null, 2);
-  });
-</script>
+      const data = await res.json();
+
+      if (data.success) {
+        responseBox.textContent = "✅ Message sent successfully!";
+      } else {
+        responseBox.textContent = "❌ Something went wrong.";
+      }
+    }
+  </script>
 
 </body>
 </html>
