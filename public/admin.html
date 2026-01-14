@@ -8,45 +8,57 @@
   <style>
     body {
       font-family: Arial, sans-serif;
-      background: #f4f6f8;
-      padding: 30px;
+      background: #f4f6fb;
+      margin: 0;
+      padding: 40px;
     }
 
     h1 {
       text-align: center;
-      margin-bottom: 20px;
+      margin-bottom: 30px;
     }
 
     table {
       width: 100%;
       border-collapse: collapse;
       background: #fff;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
     }
 
     th, td {
-      padding: 12px;
-      border: 1px solid #ddd;
+      padding: 14px;
       text-align: left;
+      border-bottom: 1px solid #e5e7eb;
+      vertical-align: top;
     }
 
     th {
       background: #4f46e5;
-      color: #fff;
+      color: white;
+      font-weight: bold;
     }
 
-    tr:nth-child(even) {
-      background: #f9f9f9;
+    tr:hover {
+      background: #f9fafb;
     }
 
     .badge {
-      padding: 4px 8px;
-      border-radius: 5px;
+      padding: 4px 10px;
+      border-radius: 12px;
       font-size: 12px;
-      color: white;
+      font-weight: bold;
+      display: inline-block;
     }
 
-    .WARM { background: #f59e0b; }
-    .COLD { background: #6b7280; }
+    .hot { background: #fee2e2; color: #991b1b; }
+    .warm { background: #fef3c7; color: #92400e; }
+    .cold { background: #e0e7ff; color: #3730a3; }
+
+    .empty {
+      text-align: center;
+      padding: 30px;
+      color: #6b7280;
+    }
   </style>
 </head>
 <body>
@@ -64,8 +76,10 @@
         <th>Date</th>
       </tr>
     </thead>
-    <tbody id="leadsTable">
-      <tr><td colspan="6">Loading leads...</td></tr>
+    <tbody id="leads-body">
+      <tr>
+        <td colspan="6" class="empty">Loading leads…</td>
+      </tr>
     </tbody>
   </table>
 
@@ -73,33 +87,49 @@
     async function loadLeads() {
       try {
         const res = await fetch("/api/leads");
-        const data = await res.json();
+        const leads = await res.json();
 
-        const table = document.getElementById("leadsTable");
-        table.innerHTML = "";
+        const tbody = document.getElementById("leads-body");
+        tbody.innerHTML = "";
 
-        data.leads.forEach(lead => {
+        if (!leads.length) {
+          tbody.innerHTML = `
+            <tr>
+              <td colspan="6" class="empty">No leads yet</td>
+            </tr>
+          `;
+          return;
+        }
+
+        leads.forEach(lead => {
+          let badgeClass = "cold";
+          if (lead.qualification === "HOT") badgeClass = "hot";
+          if (lead.qualification === "WARM") badgeClass = "warm";
+
           const row = document.createElement("tr");
-
           row.innerHTML = `
             <td>${lead.name}</td>
             <td>${lead.email}</td>
             <td>${lead.message}</td>
             <td>
-              <span class="badge ${lead.qualification}">
+              <span class="badge ${badgeClass}">
                 ${lead.qualification}
               </span>
             </td>
-            <td>${lead.ai_reply || "-"}</td>
+            <td>${lead.ai_reply || ""}</td>
             <td>${new Date(lead.created_at).toLocaleString()}</td>
           `;
 
-          table.appendChild(row);
+          tbody.appendChild(row);
         });
+
       } catch (err) {
         console.error(err);
-        document.getElementById("leadsTable").innerHTML =
-          "<tr><td colspan='6'>Error loading leads</td></tr>";
+        document.getElementById("leads-body").innerHTML = `
+          <tr>
+            <td colspan="6" class="empty">Failed to load leads</td>
+          </tr>
+        `;
       }
     }
 
