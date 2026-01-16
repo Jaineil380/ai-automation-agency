@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <title>Admin Login</title>
 
-  <!-- Supabase Browser SDK -->
+  <!-- ✅ Supabase Browser SDK -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <style>
@@ -58,33 +58,59 @@
   <input id="email" type="email" placeholder="Admin email" />
   <input id="password" type="password" placeholder="Password" />
 
-  <button onclick="login()">Login</button>
+  <button id="loginBtn">Login</button>
 
   <div id="error" class="error"></div>
 </div>
 
 <script>
-  // ✅ CORRECT WAY (THIS FIXES LOGIN)
+  // 🧪 STEP 1: VERIFY SUPABASE SDK
+  if (!window.supabase) {
+    alert("❌ Supabase SDK NOT loaded");
+  } else {
+    console.log("✅ Supabase SDK loaded");
+  }
+
+  // 🔁 REPLACE WITH YOUR REAL VALUES
+  const SUPABASE_URL = "https://tqrsxcwlhxfkefoeiddl.supabase.co";
+  const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRxcnN4Y3dsaHhma2Vmb2VpZGRsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjgyMTA1NTgsImV4cCI6MjA4Mzc4NjU1OH0.XA9d8AhKwKTovZA9-qI4g8r3DMKli-HBYhD6aNNm8UE";
+
+  // 🧪 STEP 2: CREATE CLIENT
   const supabase = window.supabase.createClient(
-    "https://tqrsxcwlhxfkefoeiddl.supabase.co",
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRxcnN4Y3dsaHhma2Vmb2VpZGRsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjgyMTA1NTgsImV4cCI6MjA4Mzc4NjU1OH0.XA9d8AhKwKTovZA9-qI4g8r3DMKli-HBYhD6aNNm8UE"
+    SUPABASE_URL,
+    SUPABASE_ANON_KEY
   );
 
+  // 🧪 STEP 3: BUTTON HANDLER
+  document.getElementById("loginBtn").addEventListener("click", login);
+
   async function login() {
+    alert("Login button clicked ✅");
+
     const email = document.getElementById("email").value;
     const password = document.getElementById("password").value;
     const errorBox = document.getElementById("error");
 
     errorBox.innerText = "";
 
-    const { error } = await supabase.auth.signInWithPassword({
+    if (!email || !password) {
+      errorBox.innerText = "Please enter email and password";
+      return;
+    }
+
+    console.log("Attempting login:", email);
+
+    const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password
     });
 
     if (error) {
+      console.error(error);
       errorBox.innerText = error.message;
+      alert("❌ Login failed: " + error.message);
     } else {
+      alert("✅ Login successful");
       window.location.href = "/admin.html";
     }
   }
