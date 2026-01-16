@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <title>Admin Login</title>
 
-  <!-- ✅ Supabase Browser SDK -->
+  <!-- Supabase CDN -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <style>
@@ -16,7 +16,6 @@
       align-items: center;
       height: 100vh;
     }
-
     .box {
       background: white;
       padding: 30px;
@@ -24,17 +23,12 @@
       border-radius: 10px;
       box-shadow: 0 10px 30px rgba(0,0,0,0.1);
     }
-
-    h2 {
-      text-align: center;
-    }
-
+    h2 { text-align: center; }
     input, button {
       width: 100%;
       padding: 10px;
       margin-top: 12px;
     }
-
     button {
       background: #4f46e5;
       color: white;
@@ -42,50 +36,48 @@
       cursor: pointer;
       font-weight: bold;
     }
-
     .error {
       color: red;
-      margin-top: 10px;
       text-align: center;
+      margin-top: 10px;
     }
   </style>
 </head>
+
 <body>
 
 <div class="box">
   <h2>Admin Login</h2>
 
+  <!-- ⚠️ NOT inside a form -->
   <input id="email" type="email" placeholder="Admin email" />
   <input id="password" type="password" placeholder="Password" />
 
-  <button id="loginBtn">Login</button>
+  <!-- INLINE onclick (cannot fail) -->
+  <button onclick="login()">Login</button>
 
   <div id="error" class="error"></div>
 </div>
 
 <script>
-  // 🧪 STEP 1: VERIFY SUPABASE SDK
+  alert("✅ JS FILE LOADED");
+
   if (!window.supabase) {
-    alert("❌ Supabase SDK NOT loaded");
+    alert("❌ Supabase NOT loaded");
   } else {
-    console.log("✅ Supabase SDK loaded");
+    console.log("Supabase loaded");
   }
 
-  // 🔁 REPLACE WITH YOUR REAL VALUES
   const SUPABASE_URL = "https://tqrsxcwlhxfkefoeiddl.supabase.co";
   const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRxcnN4Y3dsaHhma2Vmb2VpZGRsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjgyMTA1NTgsImV4cCI6MjA4Mzc4NjU1OH0.XA9d8AhKwKTovZA9-qI4g8r3DMKli-HBYhD6aNNm8UE";
 
-  // 🧪 STEP 2: CREATE CLIENT
   const supabase = window.supabase.createClient(
     SUPABASE_URL,
     SUPABASE_ANON_KEY
   );
 
-  // 🧪 STEP 3: BUTTON HANDLER
-  document.getElementById("loginBtn").addEventListener("click", login);
-
   async function login() {
-    alert("Login button clicked ✅");
+    alert("🟢 Login clicked");
 
     const email = document.getElementById("email").value;
     const password = document.getElementById("password").value;
@@ -93,24 +85,16 @@
 
     errorBox.innerText = "";
 
-    if (!email || !password) {
-      errorBox.innerText = "Please enter email and password";
-      return;
-    }
-
-    console.log("Attempting login:", email);
-
     const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password
     });
 
     if (error) {
-      console.error(error);
+      alert("❌ " + error.message);
       errorBox.innerText = error.message;
-      alert("❌ Login failed: " + error.message);
     } else {
-      alert("✅ Login successful");
+      alert("✅ Login success");
       window.location.href = "/admin.html";
     }
   }
