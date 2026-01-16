@@ -3,33 +3,50 @@
 <head>
   <meta charset="UTF-8" />
   <title>Admin Login</title>
-  <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+
+  <!-- Supabase Browser SDK -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
   <style>
     body {
       font-family: Arial, sans-serif;
-      background: #f5f7fb;
+      background: #f4f6fb;
       display: flex;
       justify-content: center;
       align-items: center;
       height: 100vh;
     }
+
     .box {
       background: white;
       padding: 30px;
-      width: 350px;
-      border-radius: 8px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+      width: 320px;
+      border-radius: 10px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
     }
+
+    h2 {
+      text-align: center;
+    }
+
     input, button {
       width: 100%;
-      padding: 12px;
-      margin-top: 10px;
+      padding: 10px;
+      margin-top: 12px;
     }
+
     button {
       background: #4f46e5;
       color: white;
       border: none;
       cursor: pointer;
+      font-weight: bold;
+    }
+
+    .error {
+      color: red;
+      margin-top: 10px;
+      text-align: center;
     }
   </style>
 </head>
@@ -37,33 +54,40 @@
 
 <div class="box">
   <h2>Admin Login</h2>
-  <input id="email" type="email" placeholder="Email" />
+
+  <input id="email" type="email" placeholder="Admin email" />
   <input id="password" type="password" placeholder="Password" />
+
   <button onclick="login()">Login</button>
-  <p id="error" style="color:red;"></p>
+
+  <div id="error" class="error"></div>
 </div>
 
 <script>
-const supabase = supabase.createClient(
-  "YOUR_SUPABASE_URL",
-  "YOUR_SUPABASE_ANON_KEY"
-);
+  // ✅ CORRECT WAY (THIS FIXES LOGIN)
+  const supabase = window.supabase.createClient(
+    "https://tqrsxcwlhxfkefoeiddl.supabase.co",
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRxcnN4Y3dsaHhma2Vmb2VpZGRsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjgyMTA1NTgsImV4cCI6MjA4Mzc4NjU1OH0.XA9d8AhKwKTovZA9-qI4g8r3DMKli-HBYhD6aNNm8UE"
+  );
 
-async function login() {
-  const email = document.getElementById("email").value;
-  const password = document.getElementById("password").value;
+  async function login() {
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
+    const errorBox = document.getElementById("error");
 
-  const { error } = await supabase.auth.signInWithPassword({
-    email,
-    password
-  });
+    errorBox.innerText = "";
 
-  if (error) {
-    document.getElementById("error").innerText = error.message;
-  } else {
-    window.location.href = "/admin.html";
+    const { error } = await supabase.auth.signInWithPassword({
+      email,
+      password
+    });
+
+    if (error) {
+      errorBox.innerText = error.message;
+    } else {
+      window.location.href = "/admin.html";
+    }
   }
-}
 </script>
 
 </body>
