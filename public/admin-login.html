@@ -7,31 +7,32 @@
 
   <style>
     body {
+      margin: 0;
       font-family: Arial, sans-serif;
-      background: #f5f7fb;
+      background: #f4f6fb;
+      height: 100vh;
       display: flex;
       align-items: center;
       justify-content: center;
-      height: 100vh;
     }
 
     .card {
       background: white;
       padding: 40px;
-      width: 360px;
       border-radius: 12px;
-      box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+      width: 360px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.08);
     }
 
     h2 {
       text-align: center;
-      margin-bottom: 24px;
+      margin-bottom: 25px;
     }
 
     input {
       width: 100%;
       padding: 12px;
-      margin-bottom: 16px;
+      margin-bottom: 15px;
       border-radius: 6px;
       border: 1px solid #ccc;
       font-size: 14px;
@@ -53,10 +54,9 @@
     }
 
     .error {
-      margin-top: 12px;
       color: red;
       text-align: center;
-      font-size: 14px;
+      margin-top: 10px;
     }
   </style>
 </head>
@@ -66,43 +66,48 @@
   <div class="card">
     <h2>Admin Login</h2>
 
-    <input id="email" type="email" placeholder="Admin email" />
-    <input id="password" type="password" placeholder="Password" />
+    <input type="email" id="email" placeholder="Admin email" />
+    <input type="password" id="password" placeholder="Password" />
 
     <button id="loginBtn">Login</button>
 
-    <div id="error" class="error"></div>
+    <div class="error" id="errorMsg"></div>
   </div>
 
-  <!-- ✅ SUPABASE CDN (LOAD ONCE) -->
+  <!-- Supabase CDN (ONLY ONCE) -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-  <!-- ✅ LOGIN LOGIC -->
   <script>
-    console.log("Admin login JS loaded");
-
+    // ==============================
+    // CONFIG (REPLACE WITH YOUR KEYS)
+    // ==============================
     const SUPABASE_URL = "https://tqrsxcwlhxfkefoeiddl.supabase.co";
     const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRxcnN4Y3dsaHhma2Vmb2VpZGRsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjgyMTA1NTgsImV4cCI6MjA4Mzc4NjU1OH0.XA9d8AhKwKTovZA9-qI4g8r3DMKli-HBYhD6aNNm8UE";
 
-    // ✅ DECLARE SUPABASE ONLY ONCE
+    // ==============================
+    // INIT SUPABASE (ONLY ONCE)
+    // ==============================
     const supabase = window.supabase.createClient(
       SUPABASE_URL,
       SUPABASE_ANON_KEY
     );
 
-    document.getElementById("loginBtn").addEventListener("click", async () => {
-      const email = document.getElementById("email").value;
-      const password = document.getElementById("password").value;
-      const errorBox = document.getElementById("error");
+    console.log("Admin login loaded");
 
-      errorBox.textContent = "";
+    // ==============================
+    // LOGIN HANDLER
+    // ==============================
+    document.getElementById("loginBtn").addEventListener("click", async () => {
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value.trim();
+      const errorMsg = document.getElementById("errorMsg");
+
+      errorMsg.textContent = "";
 
       if (!email || !password) {
-        errorBox.textContent = "Email and password required";
+        errorMsg.textContent = "Email and password required";
         return;
       }
-
-      console.log("Attempting login…");
 
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
@@ -110,14 +115,11 @@
       });
 
       if (error) {
-        console.error(error);
-        errorBox.textContent = error.message;
+        errorMsg.textContent = error.message;
         return;
       }
 
-      console.log("Login success", data);
-
-      // ✅ REDIRECT TO DASHBOARD
+      // ✅ SUCCESS
       window.location.href = "/admin.html";
     });
   </script>
