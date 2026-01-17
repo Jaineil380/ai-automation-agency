@@ -3,102 +3,124 @@
 <head>
   <meta charset="UTF-8" />
   <title>Admin Login</title>
-
-  <!-- Supabase CDN -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
   <style>
     body {
       font-family: Arial, sans-serif;
-      background: #f4f6fb;
+      background: #f5f7fb;
       display: flex;
-      justify-content: center;
       align-items: center;
+      justify-content: center;
       height: 100vh;
     }
-    .box {
+
+    .card {
       background: white;
-      padding: 30px;
-      width: 320px;
-      border-radius: 10px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+      padding: 40px;
+      width: 360px;
+      border-radius: 12px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.1);
     }
-    h2 { text-align: center; }
-    input, button {
+
+    h2 {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+
+    input {
       width: 100%;
-      padding: 10px;
-      margin-top: 12px;
+      padding: 12px;
+      margin-bottom: 16px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      font-size: 14px;
     }
+
     button {
+      width: 100%;
+      padding: 12px;
       background: #4f46e5;
       color: white;
       border: none;
+      border-radius: 6px;
+      font-size: 16px;
       cursor: pointer;
-      font-weight: bold;
     }
+
+    button:hover {
+      background: #4338ca;
+    }
+
     .error {
+      margin-top: 12px;
       color: red;
       text-align: center;
-      margin-top: 10px;
+      font-size: 14px;
     }
   </style>
 </head>
 
 <body>
 
-<div class="box">
-  <h2>Admin Login</h2>
+  <div class="card">
+    <h2>Admin Login</h2>
 
-  <!-- ⚠️ NOT inside a form -->
-  <input id="email" type="email" placeholder="Admin email" />
-  <input id="password" type="password" placeholder="Password" />
+    <input id="email" type="email" placeholder="Admin email" />
+    <input id="password" type="password" placeholder="Password" />
 
-  <!-- INLINE onclick (cannot fail) -->
-  <button onclick="login()">Login</button>
+    <button id="loginBtn">Login</button>
 
-  <div id="error" class="error"></div>
-</div>
+    <div id="error" class="error"></div>
+  </div>
 
-<script>
-  alert("✅ JS FILE LOADED");
+  <!-- ✅ SUPABASE CDN (LOAD ONCE) -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-  if (!window.supabase) {
-    alert("❌ Supabase NOT loaded");
-  } else {
-    console.log("Supabase loaded");
-  }
+  <!-- ✅ LOGIN LOGIC -->
+  <script>
+    console.log("Admin login JS loaded");
 
-  const SUPABASE_URL = "https://tqrsxcwlhxfkefoeiddl.supabase.co";
-  const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRxcnN4Y3dsaHhma2Vmb2VpZGRsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjgyMTA1NTgsImV4cCI6MjA4Mzc4NjU1OH0.XA9d8AhKwKTovZA9-qI4g8r3DMKli-HBYhD6aNNm8UE";
+    const SUPABASE_URL = "https://tqrsxcwlhxfkefoeiddl.supabase.co";
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRxcnN4Y3dsaHhma2Vmb2VpZGRsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjgyMTA1NTgsImV4cCI6MjA4Mzc4NjU1OH0.XA9d8AhKwKTovZA9-qI4g8r3DMKli-HBYhD6aNNm8UE";
 
-  const supabase = window.supabase.createClient(
-    SUPABASE_URL,
-    SUPABASE_ANON_KEY
-  );
+    // ✅ DECLARE SUPABASE ONLY ONCE
+    const supabase = window.supabase.createClient(
+      SUPABASE_URL,
+      SUPABASE_ANON_KEY
+    );
 
-  async function login() {
-    alert("🟢 Login clicked");
+    document.getElementById("loginBtn").addEventListener("click", async () => {
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+      const errorBox = document.getElementById("error");
 
-    const email = document.getElementById("email").value;
-    const password = document.getElementById("password").value;
-    const errorBox = document.getElementById("error");
+      errorBox.textContent = "";
 
-    errorBox.innerText = "";
+      if (!email || !password) {
+        errorBox.textContent = "Email and password required";
+        return;
+      }
 
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email,
-      password
-    });
+      console.log("Attempting login…");
 
-    if (error) {
-      alert("❌ " + error.message);
-      errorBox.innerText = error.message;
-    } else {
-      alert("✅ Login success");
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+      if (error) {
+        console.error(error);
+        errorBox.textContent = error.message;
+        return;
+      }
+
+      console.log("Login success", data);
+
+      // ✅ REDIRECT TO DASHBOARD
       window.location.href = "/admin.html";
-    }
-  }
-</script>
+    });
+  </script>
 
 </body>
 </html>
